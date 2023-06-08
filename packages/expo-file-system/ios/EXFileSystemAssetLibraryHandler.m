@@ -25,6 +25,7 @@
     result[@"uri"] = fileUri;
     result[@"modificationTime"] = @(asset.modificationDate.timeIntervalSince1970);
     if (options[@"md5"] || options[@"size"]) {
+#if !TARGET_OS_OSX
       [[PHImageManager defaultManager] requestImageDataForAsset:asset options:nil resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
         result[@"size"] = @(imageData.length);
         if (options[@"md5"]) {
@@ -32,6 +33,9 @@
         }
         resolve(result);
       }];
+#else
+      resolve(@{ @"exists": @(NO), @"isDirectory": @(NO) });
+#endif
     } else {
       resolve(result);
     }
@@ -84,9 +88,15 @@
         [EXFileSystemAssetLibraryHandler copyData:data toPath:toPath resolver:resolve rejecter:reject];
       }];
     } else {
+#if !TARGET_OS_OSX
       [[PHImageManager defaultManager] requestImageDataForAsset:asset options:nil resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, UIImageOrientation orientation, NSDictionary * _Nullable info) {
         [EXFileSystemAssetLibraryHandler copyData:imageData toPath:toPath resolver:resolve rejecter:reject];
       }];
+#else
+      [[PHImageManager defaultManager] requestImageDataAndOrientationForAsset:asset options:nil resultHandler:^(NSData * _Nullable imageData, NSString * _Nullable dataUTI, CGImagePropertyOrientation orientation, NSDictionary * _Nullable info) {
+        [EXFileSystemAssetLibraryHandler copyData:imageData toPath:toPath resolver:resolve rejecter:reject];
+      }];
+#endif
     }
   } else {
     reject(@"E_FILE_NOT_COPIED",
@@ -110,7 +120,7 @@
       hasWarned = YES;
     }
     return nil;
-#else
+#elseif !TARGET_OS_OSX
     // This is the older, deprecated way of fetching assets from assets-library
     // using the "assets-library://" protocol
     return [PHAsset fetchAssetsWithALAssetURLs:@[url] options:nil];

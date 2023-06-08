@@ -1,8 +1,8 @@
 // Copyright 2015-present 650 Industries. All rights reserved.
 
 #import <Foundation/Foundation.h>
+#import <ExpoModulesCore/Platform.h>
 #import <ExpoModulesCore/EXSingletonModule.h>
-#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -12,7 +12,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#if TARGET_OS_OSX
+@interface EXSessionHandler : EXSingletonModule <NSApplicationDelegate, EXSessionHandler>
+#else
 @interface EXSessionHandler : EXSingletonModule <UIApplicationDelegate, EXSessionHandler>
+#endif // TARGET_OS_OSX
 
 @end
 
