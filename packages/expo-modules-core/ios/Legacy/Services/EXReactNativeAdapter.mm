@@ -317,7 +317,7 @@ EX_REGISTER_MODULE();
 
 - (BOOL)isApplicationStateBackground
 {
-#ifdef TARGET_OS_OSX
+#if TARGET_OS_OSX
   return YES;
 #else
   return RCTSharedApplication().applicationState == UIApplicationStateBackground;
@@ -326,7 +326,7 @@ EX_REGISTER_MODULE();
 
 - (BOOL)isApplicationStateActive
 {
-#ifdef TARGET_OS_OSX
+#if TARGET_OS_OSX
   return YES;
 #else
   return RCTSharedApplication().applicationState == UIApplicationStateActive;

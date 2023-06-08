@@ -39,7 +39,7 @@ EX_REGISTER_MODULE();
 
 - (UIViewController *)currentViewController
 {
-#ifdef TARGET_OS_OSX
+#if TARGET_OS_OSX
   return [[[NSApplication sharedApplication] keyWindow] contentViewController];
 #else
   id<EXUtilService> utilService = [_moduleRegistry getSingletonModuleForName:@"Util"];
@@ -106,7 +106,7 @@ EX_REGISTER_MODULE();
   static CGFloat scale;
   
   [self unsafeExecuteOnMainQueueOnceSync:&onceToken block:^{
-#ifdef TARGET_OS_OSX
+#if TARGET_OS_OSX
     scale = [NSScreen mainScreen].backingScaleFactor;
 #else
     scale = [UIScreen mainScreen].scale;
