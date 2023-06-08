@@ -66,10 +66,10 @@ EX_REGISTER_MODULE();
            @"manifest": EXNullIfNil([[self class] appConfig]),
            @"platform": @{
                @"ios": @{
-                   @"buildNumber": [self buildVersion],
+                   @"buildNumber": EXNullIfNil([self buildVersion]),
                    @"platform": [[self class] devicePlatform],
                    @"userInterfaceIdiom": [self userInterfaceIdiom],
-                   @"systemVersion": [self iosVersion],
+                   @"systemVersion": EXNullIfNil([self iosVersion]),
                    },
                },
            };
@@ -87,7 +87,7 @@ EX_REGISTER_MODULE();
 
 - (CGFloat)statusBarHeight
 {
-#if TARGET_OS_TV
+#if TARGET_OS_OSX || TARGET_OS_TV
   return 0;
 #else
   __block CGSize statusBarSize;
@@ -100,11 +100,16 @@ EX_REGISTER_MODULE();
 
 - (NSString *)iosVersion
 {
+#if !TARGET_OS_OSX
   return [UIDevice currentDevice].systemVersion;
+#else
+  return nil;
+#endif
 }
 
 - (NSString *)userInterfaceIdiom
 {
+#if !TARGET_OS_OSX
   UIUserInterfaceIdiom idiom = UI_USER_INTERFACE_IDIOM();
 
   switch (idiom) {
@@ -117,6 +122,9 @@ EX_REGISTER_MODULE();
     default:
       return @"unsupported";
   }
+#else
+  return @"desktop";
+#endif
 }
 
 - (BOOL)isDevice
@@ -129,6 +137,7 @@ EX_REGISTER_MODULE();
 
 - (NSArray<NSString *> *)systemFontNames
 {
+#if !TARGET_OS_OSX
   NSArray<NSString *> *familyNames = [UIFont familyNames];
   NSMutableArray<NSString *> *fontNames = [NSMutableArray array];
   for (NSString *familyName in familyNames) {
@@ -146,6 +155,9 @@ EX_REGISTER_MODULE();
 
   // Remove duplciates and sort alphabetically
   return [[[NSSet setWithArray:fontNames] allObjects] sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+#else
+  return @[];
+#endif
 }
 
 # pragma mark - device info
@@ -165,7 +177,11 @@ EX_REGISTER_MODULE();
 
 + (NSString *)deviceName
 {
+#if !TARGET_OS_OSX
   return [UIDevice currentDevice].name;
+#else
+  return [NSHost currentHost].name;
+#endif
 }
 
 + (NSDictionary *)appConfig
