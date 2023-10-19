@@ -13,6 +13,7 @@ const expoDependencyNames = [
   '@expo/prebuild-config',
   'expo-application',
   'expo-av',
+  'expo-asset',
   'expo-constants',
   'expo-device',
   'expo-eas-client',
