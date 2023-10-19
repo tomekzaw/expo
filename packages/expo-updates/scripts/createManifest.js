@@ -1,3 +1,9 @@
+const {
+  setOfAssetsToBeBundled,
+  assetPatternsToBeBundled,
+  assetShouldBeIncludedInExport,
+} = require('@expo/cli/build/src/export/exportAssets');
+const { getPublicExpoManifestAsync } = require('@expo/cli/build/src/export/getPublicExpoManifest');
 const { loadMetroConfigAsync } = require('@expo/cli/build/src/start/server/metro/instantiateMetro');
 const { resolveEntryPoint } = require('@expo/config/paths');
 const crypto = require('crypto');
@@ -50,6 +56,12 @@ function getRelativeEntryPoint(projectRoot, platform) {
 
   process.chdir(projectRoot);
 
+  const expoConfig = await getPublicExpoManifestAsync(projectRoot, {
+    skipValidation: false,
+  });
+
+  const assetPatterns = assetPatternsToBeBundled(expoConfig);
+
   let metroConfig;
   try {
     // Load the metro config the same way it would be loaded in Expo CLI.
@@ -84,6 +96,8 @@ function getRelativeEntryPoint(projectRoot, platform) {
     );
   }
 
+  const bundledAssetSet = setOfAssetsToBeBundled(assets, assetPatterns, projectRoot);
+
   const manifest = {
     id: crypto.randomUUID(),
     commitTime: new Date().getTime(),
@@ -96,10 +110,12 @@ function getRelativeEntryPoint(projectRoot, platform) {
         'The hashAssetFiles Metro plugin is not configured. You need to add a metro.config.js to your project that configures Metro to use this plugin. See https://github.com/expo/expo/blob/main/packages/expo-updates/README.md#metroconfigjs for an example.'
       );
     }
+    const embedded = !assetShouldBeIncludedInExport(asset, bundledAssetSet);
     filterPlatformAssetScales(platform, asset.scales).forEach(function (scale, index) {
       const assetInfoForManifest = {
         name: asset.name,
         type: asset.type,
+        embedded,
         scale,
         packagerHash: asset.fileHashes[index],
         subdirectory: asset.httpServerLocation,
