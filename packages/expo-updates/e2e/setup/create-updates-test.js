@@ -17,10 +17,12 @@ const EXPO_ACCOUNT_NAME = process.env.EXPO_ACCOUNT_NAME || 'myusername';
  */
 
 function transformAppJson(appJson, projectName, runtimeVersion) {
+  const plugins = ['expo-updates'];
   return {
     expo: {
       ...appJson.expo,
       name: projectName,
+      plugins,
       runtimeVersion,
       updates: {
         ...appJson.expo.updates,
