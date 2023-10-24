@@ -15,6 +15,7 @@
 
 - Revert `URL` support. ([#25006](https://github.com/expo/expo/pull/25006) by [@EvanBacon](https://github.com/EvanBacon))
 - Encode Blob components in `URL.createObjectURL`. ([#25004](https://github.com/expo/expo/pull/25004) by [@EvanBacon](https://github.com/EvanBacon))
+- On Android bump `compileSdkVersion` and `targetSdkVersion` to `31`. ([#24708](https://github.com/expo/expo/pull/24708) by [@alanjhughes](https://github.com/alanjhughes))
 
 ## 49.0.16 — 2023-10-20
 

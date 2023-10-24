@@ -17,6 +17,7 @@
 - iOS: Refactor responsibility of app controller. ([#24934](https://github.com/expo/expo/pull/24934), [#24949](https://github.com/expo/expo/pull/24949) by [@wschurman](https://github.com/wschurman))
 - Android: Refactor responsibility of app controller. ([#24954](https://github.com/expo/expo/pull/24954), [#24975](https://github.com/expo/expo/pull/24975) by [@wschurman](https://github.com/wschurman))
 - Android: Backport ExpoGoUpdatesModule to SDK 49. ([#24974](https://github.com/expo/expo/pull/24974) by [@wschurman](https://github.com/wschurman))
+- On `Android` bump `compileSdkVersion` and `targetSdkVersion` to `34`. ([#24708](https://github.com/expo/expo/pull/24708) by [@alanjhughes](https://github.com/alanjhughes))
 
 ## 0.22.0 — 2023-10-17
 

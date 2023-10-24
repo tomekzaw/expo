@@ -11,6 +11,7 @@
 ### 💡 Others
 
 - [Android] Moved to the new Modules API. ([#24737](https://github.com/expo/expo/pull/24737) by [@behenate](https://github.com/behenate))
+- On `Android` bump `compileSdkVersion` and `targetSdkVersion` to `34`. ([#24708](https://github.com/expo/expo/pull/24708) by [@alanjhughes](https://github.com/alanjhughes))
 
 ## 16.4.0 — 2023-10-17
 
