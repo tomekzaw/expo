@@ -101,6 +101,15 @@ class DatabaseLauncher(
     val assetEntities = database.assetDao().loadAssetsForUpdate(launchedUpdate!!.id)
 
     localAssetFiles = mutableMapOf<AssetEntity, String>().apply {
+      for (asset in embeddedAssets(context)) {
+        if (asset.isLaunchAsset) {
+          continue
+        }
+        val filename = asset.relativePath
+        if (filename != null) {
+          this[asset] = Uri.fromFile(File(updatesDirectory, asset.relativePath)).toString()
+        }
+      }
       for (asset in assetEntities) {
         if (asset.id == launchAsset.id) {
           // we took care of this one above
@@ -147,6 +156,11 @@ class DatabaseLauncher(
 
   fun getReadyUpdateIds(database: UpdatesDatabase): List<UUID> {
     return database.updateDao().loadAllUpdateIdsWithStatus(UpdateStatus.READY)
+  }
+
+  internal fun embeddedAssets(context: Context): List<AssetEntity> {
+    val embeddedManifest = EmbeddedManifest.get(context, this.configuration)
+    return embeddedManifest?.assetEntityList ?: listOf()
   }
 
   internal fun ensureAssetExists(asset: AssetEntity, database: UpdatesDatabase, context: Context): File? {
