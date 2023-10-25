@@ -42,6 +42,7 @@ public class AppLauncherWithDatabase: NSObject, AppLauncher {
   private let config: UpdatesConfig
   private let database: UpdatesDatabase
   private let directory: URL
+  private let logger: UpdatesLogger
   public private(set) var completionQueue: DispatchQueue
   public private(set) var completion: AppLauncherCompletionBlock?
 
@@ -54,6 +55,7 @@ public class AppLauncherWithDatabase: NSObject, AppLauncher {
     self.database = database
     self.directory = directory
     self.completionQueue = completionQueue
+    self.logger = UpdatesLogger()
   }
 
   public func isUsingEmbeddedAssets() -> Bool {
@@ -216,12 +218,25 @@ public class AppLauncherWithDatabase: NSObject, AppLauncher {
       return
     }
 
-    assetFilesMap = [:]
+    if launchedUpdate.status != UpdateStatus.StatusEmbedded {
+      self.assetFilesMap = [:]
+
+      // Prepopulate with embedded assets
+      for asset in embeddedAssets() {
+        if let assetKey: String = asset.key {
+          if !asset.isLaunchAsset {
+            self.assetFilesMap![assetKey] = directory.appendingPathComponent(asset.filename).absoluteString
+          }
+        }
+      }
+    }
 
     let assets = launchedUpdate.assets()!
     let totalAssetCount = assets.count
+    logger.info(message: "AppLauncherWithDatabase: totalAssetCount = \(totalAssetCount)")
     for asset in assets {
       let assetLocalUrl = directory.appendingPathComponent(asset.filename)
+      logger.info(message: "AppLauncherWithDatabase: assetLocalUrl = \(assetLocalUrl)")
       ensureAssetExists(asset: asset, withLocalUrl: assetLocalUrl) { exists in
         dispatchPrecondition(condition: .onQueue(self.launcherQueue))
         self.completedAssets += 1
@@ -260,7 +275,7 @@ public class AppLauncherWithDatabase: NSObject, AppLauncher {
         }
 
         if let error = error {
-          NSLog("Error copying embedded asset %@: %@", [asset.key, error.localizedDescription])
+          self.logger.warn(message: String(format:"AppLauncherWithDatabase: Error copying embedded asset %@: %@", [asset.key, error.localizedDescription]))
         }
 
         self.downloadAsset(asset, withLocalUrl: assetLocalUrl) { downloadAssetError, downloadAssetAsset, _ in
@@ -270,7 +285,7 @@ public class AppLauncherWithDatabase: NSObject, AppLauncher {
               // so we want to propagate this error
               self.launchAssetError = downloadAssetError
             }
-            NSLog("Failed to load missing asset %@: %@", [downloadAssetAsset.key, downloadAssetError.localizedDescription])
+            self.logger.warn(message: String(format:"AppLauncherWithDatabase: Failed to load missing asset %@: %@", [downloadAssetAsset.key, downloadAssetError.localizedDescription]))
             completion(false)
           } else {
             // attempt to update the database record to match the newly downloaded asset
@@ -279,7 +294,7 @@ public class AppLauncherWithDatabase: NSObject, AppLauncher {
               do {
                 try self.database.updateAsset(downloadAssetAsset)
               } catch {
-                NSLog("Could not write data for downloaded asset to database: %@", [error.localizedDescription])
+                self.logger.warn(message: String(format:"AppLauncherWithDatabase: Could not write data for downloaded asset to database: %@", [error.localizedDescription]))
               }
             }
             completion(true)
@@ -394,4 +409,12 @@ public class AppLauncherWithDatabase: NSObject, AppLauncher {
   private lazy var downloader: FileDownloader = {
     FileDownloader(config: config)
   }()
+
+  private func embeddedAssets() -> [UpdateAsset] {
+    let embeddedManifest: Update? = EmbeddedAppLoader.embeddedManifest(withConfig: config, database: database)
+    let embeddedAssets = embeddedManifest?.assets() ?? []
+    return embeddedAssets
+  }
+
+
 }
