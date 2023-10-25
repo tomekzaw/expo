@@ -1,12 +1,13 @@
 import { resolveAssetPatternsToBeBundledAsync } from '../exportAssets';
 
 describe(resolveAssetPatternsToBeBundledAsync, () => {
-  it(`does nothing with empty bundle patterns`, async () => {
+  it(`does the right thing with empty bundle patterns`, async () => {
     const exp = {
       name: 'Foo',
       slug: 'Foo',
     };
     expect(await resolveAssetPatternsToBeBundledAsync('/', exp, [])).toEqual({
+      bundledAssets: new Set(),
       name: 'Foo',
       slug: 'Foo',
     });

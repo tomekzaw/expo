@@ -18,10 +18,10 @@ function mapAssetHashToAssetString(asset: Asset, hash: string) {
 
 export function assetPatternsToBeBundled(
   exp: ExpoConfig & { extra?: { assetPatternsToBeBundled?: string[] } }
-): string[] | undefined {
+): string[] {
   return exp?.extra?.assetPatternsToBeBundled?.length
     ? exp?.extra?.assetPatternsToBeBundled
-    : undefined;
+    : ['**/*'];
 }
 
 /**
@@ -94,12 +94,9 @@ export async function resolveAssetPatternsToBeBundledAsync<T extends ExpoConfig>
   exp: T,
   assets: Asset[]
 ): Promise<T & { bundledAssets?: Set<string> }> {
-  if (!assetPatternsToBeBundled(exp)) {
-    return exp;
-  }
   (exp as any).bundledAssets = setOfAssetsToBeBundled(
     assets,
-    assetPatternsToBeBundled(exp) ?? ['**/*'],
+    assetPatternsToBeBundled(exp),
     projectRoot
   );
   delete exp.assetBundlePatterns;
