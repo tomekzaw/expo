@@ -226,11 +226,11 @@ EX_REGISTER_MODULE();
       _isForegrounded && (
        [notification.name isEqualToString:UIApplicationWillResignActiveNotification] ||
        [notification.name isEqualToString:UIApplicationDidEnterBackgroundNotification] ||
-       RCTSharedApplication().applicationState == UIApplicationStateBackground
+       [self isApplicationStateBackground]
       )
     ) {
     [self setAppStateToBackground];
-  } else if (!_isForegrounded && RCTSharedApplication().applicationState == UIApplicationStateActive) {
+  } else if (!_isForegrounded && [self isApplicationStateActive]) {
     [self setAppStateToForeground];
   }
 }
@@ -313,6 +313,24 @@ EX_REGISTER_MODULE();
       [strongSelf.bridge.uiManager setNeedsLayout];
     }
   });
+}
+
+- (BOOL)isApplicationStateBackground
+{
+#ifdef TARGET_OS_OSX
+  return YES;
+#else
+  return RCTSharedApplication().applicationState == UIApplicationStateBackground;
+#endif
+}
+
+- (BOOL)isApplicationStateActive
+{
+#ifdef TARGET_OS_OSX
+  return YES;
+#else
+  return RCTSharedApplication().applicationState == UIApplicationStateActive;
+#endif
 }
 
 @end

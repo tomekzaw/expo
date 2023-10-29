@@ -46,6 +46,9 @@
 
 - (UIView *)findRootView:(UIApplication *)application
 {
+#if TARGET_OS_OSX
+  return [[[[NSApplication sharedApplication] keyWindow] contentViewController] view];
+#else
   UIWindow *mainWindow = application.delegate.window;
   if (mainWindow == nil) {
     return nil;
@@ -56,8 +59,10 @@
   }
   UIView *rootView = rootViewController.view;
   return rootView;
+#endif
 }
 
+#if !TARGET_OS_OSX
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   UIView *rootView = [self findRootView:application];
@@ -70,6 +75,7 @@
   }
   return YES;
 }
+#endif // !TARGET_OS_OSX
 
 - (RCTBridge *)createBridgeWithDelegate:(id<RCTBridgeDelegate>)delegate launchOptions:(NSDictionary *)launchOptions
 {

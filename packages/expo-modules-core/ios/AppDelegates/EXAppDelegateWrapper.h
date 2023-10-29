@@ -2,7 +2,7 @@
 
 #if __cplusplus
 
-#import <UIKit/UIKit.h>
+#import <ExpoModulesCore/Platform.h>
 #import <ExpoModulesCore/EXReactDelegateWrapper.h>
 
 #if __has_include(<React-RCTAppDelegate/RCTAppDelegate.h>)
@@ -32,6 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 
 #else
+
+#import <ExpoModulesCore/Platform.h>
 
 // Workaround the main.m build error when running with new architecture mode
 // Context: https://github.com/facebook/react-native/pull/35661

@@ -1,4 +1,3 @@
-import UIKit
 import Dispatch
 import Foundation
 
@@ -18,6 +17,7 @@ open class ExpoAppDelegate: UIResponder, UIApplicationDelegate {
   @objc
   public let reactDelegate = ExpoReactDelegate(handlers: reactDelegateHandlers)
 
+#if os(iOS)
   // MARK: - Initializing the App
 
   open func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
@@ -316,6 +316,8 @@ open class ExpoAppDelegate: UIResponder, UIApplicationDelegate {
     return parsedSubscribers.isEmpty ? infoPlistOrientations : subscribersMask
   }
 #endif
+
+#endif // os(iOS)
 
   // MARK: - Statics
 
