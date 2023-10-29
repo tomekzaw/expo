@@ -138,6 +138,38 @@ public final class ImageModule: Module {
         }
       }
     }
+
+    AsyncFunction("loadAsync") { (source: ImageSource) -> Image? in
+      if let image = await ImageLoadTask(source).load() {
+        return Image(image)
+      }
+      return nil
+    }
+
+    Class("LoadTask", ImageLoadTask.self) {
+      Constructor { (source: ImageSource) in
+        return ImageLoadTask(source)
+      }
+      AsyncFunction("loadAsync") { (task: ImageLoadTask) -> Image? in
+        if let image = await task.load() {
+          return Image(image)
+        }
+        return nil
+      }
+      Function("abort") { task in
+        task.abort()
+      }
+    }
+
+    Class(Image.self) {
+      Property("width", \.pointer.size.width)
+      Property("height", \.pointer.size.height)
+      Property("scale", \.pointer.scale)
+      Property("isAnimated", \.pointer.sd_isAnimated)
+      Property("mediaType") { image in
+        return imageFormatToMediaType(image.pointer.sd_imageFormat)
+      }
+    }
   }
 
   static func registerCoders() {

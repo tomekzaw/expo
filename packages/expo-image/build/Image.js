@@ -11,6 +11,10 @@ export class Image extends React.PureComponent {
         this.nativeViewRef = React.createRef();
     }
     /**
+     * @hidden
+     */
+    static Image = ExpoImageModule.Image;
+    /**
      * Preloads images at the given urls that can be later used in the image view.
      * Preloaded images are always cached on the disk, so make sure to use
      * `disk` (default) or `memory-disk` cache policy.
@@ -66,6 +70,9 @@ export class Image extends React.PureComponent {
      */
     async stopAnimating() {
         await this.nativeViewRef.current.stopAnimating();
+    }
+    static load(source) {
+        return ExpoImageModule.load(source);
     }
     render() {
         const { style, source, placeholder, contentFit, contentPosition, transition, fadeDuration, resizeMode: resizeModeProp, defaultSource, loadingIndicatorSource, ...restProps } = this.props;

@@ -1,8 +1,12 @@
 import React from 'react';
-import { ImageProps } from './Image.types';
+import { ImageProps, ImageSource } from './Image.types';
 export declare class Image extends React.PureComponent<ImageProps> {
     nativeViewRef: any;
     constructor(props: any);
+    /**
+     * @hidden
+     */
+    static Image: any;
     /**
      * Preloads images at the given urls that can be later used in the image view.
      * Preloaded images are always cached on the disk, so make sure to use
@@ -48,6 +52,7 @@ export declare class Image extends React.PureComponent<ImageProps> {
      * @platform ios
      */
     stopAnimating(): Promise<void>;
+    static load(source: ImageSource): any;
     render(): JSX.Element;
 }
 //# sourceMappingURL=Image.d.ts.map
