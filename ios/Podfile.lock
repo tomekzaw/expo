@@ -2640,7 +2640,7 @@ SPEC CHECKSUMS:
   ExpoLocalAuthentication: 0323879e8592b859b55c12012874c60a831699c2
   ExpoLocalization: ebcdab1a3b0d025e6c4c7d7dbf87ab70d23bd5a7
   ExpoMailComposer: 142575dd638c48b3fabf5127bc6652548fdaac5f
-  ExpoModulesCore: d712760b77977a3454bf310c7b97e90bd00ae16d
+  ExpoModulesCore: 3dbfbb38f3c177abe95f1f1fe73bb69fe6722ed7
   ExpoModulesTestCore: e95cb44dbbfc57128993b1d8a15dd56f720f2756
   ExpoNetwork: 6bfaef1f062be33276b573379fdc09ea78d7aa05
   ExpoPrint: 5c1599952793b22a0261dcf1da8d601bc8c00c73
